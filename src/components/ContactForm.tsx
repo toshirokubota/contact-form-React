@@ -1,21 +1,12 @@
 import { useState } from "react";
-import { isValidQueryType, type FormObject, type QueryType } from "../types";
-import { formVaidator, isValidEmailAddress } from "../libs";
+import { type FormObject } from "../types";
+import { formVaidator } from "../libs";
 
 export default function ContactForm() {
     const [formData, setFormData] = 
         useState<FormObject>({firstName: '', lastName: '', email: '', queryType: undefined, message: '', consent: false});
     const [errorFlag, setErrorFlag] = useState({
-        'firstName': false, 'lastName': false, 'email': false, 'queryType': false, message: false, consent: false});
-
-    // const [errorFlag, setErrorFlag] = useState(new Map([
-    //     ['firstName', formData.firstName.length === 0], 
-    //     ['lastName', formData.lastName.length === 0], 
-    //     ['email', !isValidEmailAddress(formData.email)], 
-    //     ['queryType', !isValidQueryType(formData.queryType)], 
-    //     ['message', formData.message.length === 0],
-    //     ['consent', !formData.consent],
-    // ]));
+        firstName: false, lastName: false, email: false, queryType: false, message: false, consent: false});
         
     const errorMessage = {
         firstName: 'The field is required',
@@ -25,15 +16,19 @@ export default function ContactForm() {
         consent: 'To submit this form, please consent to being contacted',
         message: 'The field is required',
     }
-    function updateErrorFlag(name: string, value: string | QueryType | boolean) {
-        if(formVaidator(name, value)) {
-            setErrorFlag(prev => ({...prev, [name]: false}))
+    function updateErrorFlag(name: string, value: string | boolean | undefined): boolean {
+        if(value && formVaidator(name, value)) {
+            //setErrorFlag(prev => { console.log('updateErrorFlag: ', name, value, {...prev, [name]: false}); return ({...prev, [name]: false});});
+            setErrorFlag(prev => ({...prev, [name]: false}));
+            return false;
         } else {
-            setErrorFlag(prev => ({...prev, [name]: true}))
+            //setErrorFlag(prev => { console.log('updateErrorFlag: ', name, value, {...prev, [name]: true}); return ({...prev, [name]: true});});
+            setErrorFlag(prev => ({...prev, [name]: true}));
+            return true;
         }
     }
 
-    function handleChange(event) {
+    function handleChange(event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
         const name = event.target.name;
         const value = event.target.value;
 
@@ -41,59 +36,60 @@ export default function ContactForm() {
 
         setFormData(prev => ({...prev, [name]:value}));
     }
-    function handleChangeCheckBox (event) {
+    function handleChangeCheckBox (event: React.ChangeEvent<HTMLInputElement>) {
         const { value, checked } = event.target;
 
         updateErrorFlag('consent', value);
 
         setFormData((prev) => ({...prev, consent: checked}));
     };
-    function handleSubmit(event) {
+    function handleSubmit(event: React.MouseEvent<HTMLButtonElement>) {
         event.preventDefault();
-        console.log(formData);
+        //console.log(formData);
         let ok = true;
         for(let key in formData) {
-            if(updateErrorFlag(key, formData[key as keyof FormObject]) === false) {
+            const value = formData[key as keyof FormObject];
+            const error = updateErrorFlag(key, value);
+            //console.log('handleSubmit: ', key, value, error)
+            if(error === true) {
                 ok = false;
             }
         }
 
-        if(ok) return true;
-        else return false;
+        if(ok) {
+            setFormData({firstName: '', lastName: '', email: '', queryType: undefined, message: '', consent: false});
+            //console.log('form cleared.');
+        }
     }
 
     return (
         <form className='flex flex-col bg-gray-100 text-gray-800 rounded-xl'>
             <h1 className='text-3xl'>Contact Us</h1>
             <div className="full-name flex flex-col items-center sm:flex-row sm:gap-4">
-                {/* <div className='fname-card' > */}
-                    <label htmlFor="first-name" className={"w-full flex flex-col my-2" + `${errorFlag.firstName ? ' error': ''}`}>
-                        First Name *
-                        <input 
-                            className='px-4 py-1'
-                            type="text" 
-                            id='first-name' 
-                            name='firstName'
-                            onChange={handleChange}
-                            value={formData.firstName}
-                        />
-                        {errorFlag.firstName && <p className='text-sm text-red-600'>{errorMessage.firstName}</p>}
-                    </label>
-                {/* </div> */}
-                {/* <div className='lname-card'> */}
-                    <label htmlFor="last-name" className={"w-full flex flex-col" + `${errorFlag.firstName ? ' error': ''}`}>
-                        Last Name *
-                        <input 
-                            className='px-4 py-1'
-                            type="text" 
-                            id='last-name' 
-                            name='lastName'
-                            onChange={handleChange}
-                            value={formData.lastName}
-                        />
-                        {errorFlag.lastName && <p className='text-sm text-red-600'>{errorMessage.lastName}</p>}
-                    </label>
-                {/* </div> */}
+                <label htmlFor="first-name" className={"w-full flex flex-col my-2" + `${errorFlag.firstName ? ' error': ''}`}>
+                    First Name *
+                    <input 
+                        className='px-4 py-1'
+                        type="text" 
+                        id='first-name' 
+                        name='firstName'
+                        onChange={handleChange}
+                        value={formData.firstName}
+                    />
+                    {errorFlag.firstName && <p className='error-msg'>{errorMessage.firstName}</p>}
+                </label>
+                <label htmlFor="last-name" className={"w-full flex flex-col my-2" + `${errorFlag.firstName ? ' error': ''}`}>
+                    Last Name *
+                    <input 
+                        className='px-4 py-1'
+                        type="text" 
+                        id='last-name' 
+                        name='lastName'
+                        onChange={handleChange}
+                        value={formData.lastName}
+                    />
+                    {errorFlag.lastName && <p className='error-msg'>{errorMessage.lastName}</p>}
+                </label>
             </div>
             <div className='email-card w-full' >
                 <label htmlFor="email" className={"flex flex-col" + `${errorFlag.firstName ? ' error': ''}`}>
@@ -106,14 +102,14 @@ export default function ContactForm() {
                         onChange={handleChange}
                         value={formData.email}
                     />
-                    {errorFlag.email && <p className='text-sm text-red-600'>{errorMessage.email}</p>}
+                    {errorFlag.email && <p className='error-msg'>{errorMessage.email}</p>}
                 </label>
             </div>
             <fieldset className='query-card flex flex-col' >
-                <p>Query Type *</p>
+                <legend>Query Type *</legend>
                 <div className='flex flex-col sm:flex-row sm:gap-4'>
                     <label htmlFor="query-general" 
-                        className={'w-full px-4 py-2 my-2 border-1 border-gray-300 rounded-sm' + `${errorFlag.firstName ? ' error': ''}`}>
+                        className={'w-full py-2 my-2 border-1 border-gray-300 rounded-sm' + `${errorFlag.firstName ? ' error': ''}`}>
                         <input 
                             className='mx-4'
                             type="radio" 
@@ -126,7 +122,7 @@ export default function ContactForm() {
                         General Enquiry
                     </label>
                     <label htmlFor="query-support" 
-                        className={'w-full px-4 py-2 my-2 border-1 border-gray-300 rounded-sm' + `${errorFlag.firstName ? ' error': ''}`}>
+                        className={'w-full py-2 my-2 border-1 border-gray-300 rounded-sm' + `${errorFlag.firstName ? ' error': ''}`}>
                         <input 
                             className='mx-4'
                             type="radio" 
@@ -139,19 +135,19 @@ export default function ContactForm() {
                         Support Request
                     </label>
                 </div>
-                {errorFlag.queryType && <p className='text-sm text-red-600'>{errorMessage.queryType}</p>}
+                {errorFlag.queryType && <p className='error-msg'>{errorMessage.queryType}</p>}
             </fieldset>
             <div className='message w-full' >
                 <label htmlFor="message" className={"flex flex-col" + `${errorFlag.firstName ? ' error': ''}`}>
                     Message *
                     <textarea 
-                        id='last-name' 
+                        id='message' 
                         name='message'
                         onChange={handleChange}
                         value={formData.message}
                         rows={7}
                     />
-                    {errorFlag.message && <p className='text-sm text-red-600'>{errorMessage.message}</p>}
+                    {errorFlag.message && <p className='error-msg'>{errorMessage.message}</p>}
                 </label>
             </div>
             <label className={'flex flex-col' + `${errorFlag.firstName ? ' error': ''}`}>
@@ -165,10 +161,10 @@ export default function ContactForm() {
                         checked={formData.consent}/>
                     <p>I consent to being contacted by the team *</p>
                 </div>
-                {errorFlag.consent && <p className='text-sm text-red-600'>{errorMessage.consent}</p>}
+                {errorFlag.consent && <p className='error-msg'>{errorMessage.consent}</p>}
             </label>
             <button
-                className='w-full py-2 bg-green-800 text-gray-100 rounded-lg'
+                className='w-full py-2 text-gray-100 rounded-lg'
                 onClick={handleSubmit}
             >
                 Submit

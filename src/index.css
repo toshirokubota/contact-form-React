@@ -13,6 +13,12 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  --custom-gray-900: #2A4144;
+  --custom-gray-500: #86A2A5;
+  --custom-green-600: #0C7D69;
+  --custom-green-200: #E0F1E8;
+  --custom-red: #D73C3C;
 }
 
 body {

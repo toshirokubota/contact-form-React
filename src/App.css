@@ -1,7 +1,8 @@
 #root {
   width: 100%;
   max-width: 50rem;
-  padding-inline: clamp(2rem, 10vw, 5rem);
+  padding-inline: clamp(0.5rem, 3vw, 2rem);
+  padding-block: clamp(1rem, 5vw, 5rem);
   margin: 0 auto;
   display: flex;
   place-items: center;
@@ -9,8 +10,7 @@
 
 form {
   width: 100%;
-  padding: clamp(1rem, 5vw, 2rem);
-  margin: 1rem;
+  padding: clamp(1rem, 3vw, 2rem);
 }
 form > * {
   margin-block: 1rem;
@@ -24,15 +24,31 @@ input[type=text], input[type=email], textarea {
   border-radius: 0.25rem;
 }
 
+input[type=radio], input[type=checkbox] {
+  accent-color: var(--custom-green-600); /* Change to desired color */
+}
+
 input:focus, input:hover, textarea:focus, textarea:hover {
-  border: 1pt solid var(--color-green-700);
+  border: 1pt solid var(--custom-green-600);
   outline: none;
 }
 
 label:has(input[type=radio]:checked) {
-  background-color: var(--color-green-300);
+  background-color: var(--custom-green-200);
+}
+
+button {
+  background-color: var(--custom-green-600);
+}
+button:hover, button:focus {
+  background-color: var(--custom-gray-900);
 }
 
 label.error input, label.error textarea {
-  border: 1pt solid var(--color-red-500);
+  border: 1pt solid var(--custom-red);
+}
+
+.error-msg {
+  color: var(--custom-red);
+  font-size: 0.75rem;
 }/*# sourceMappingURL=App.css.map */
