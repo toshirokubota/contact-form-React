@@ -18,11 +18,9 @@ export default function ContactForm() {
     }
     function updateErrorFlag(name: string, value: string | boolean | undefined): boolean {
         if(value && formVaidator(name, value)) {
-            //setErrorFlag(prev => { console.log('updateErrorFlag: ', name, value, {...prev, [name]: false}); return ({...prev, [name]: false});});
             setErrorFlag(prev => ({...prev, [name]: false}));
             return false;
         } else {
-            //setErrorFlag(prev => { console.log('updateErrorFlag: ', name, value, {...prev, [name]: true}); return ({...prev, [name]: true});});
             setErrorFlag(prev => ({...prev, [name]: true}));
             return true;
         }
@@ -45,12 +43,10 @@ export default function ContactForm() {
     };
     function handleSubmit(event: React.MouseEvent<HTMLButtonElement>) {
         event.preventDefault();
-        //console.log(formData);
         let ok = true;
         for(let key in formData) {
             const value = formData[key as keyof FormObject];
             const error = updateErrorFlag(key, value);
-            //console.log('handleSubmit: ', key, value, error)
             if(error === true) {
                 ok = false;
             }
@@ -58,7 +54,6 @@ export default function ContactForm() {
 
         if(ok) {
             setFormData({firstName: '', lastName: '', email: '', queryType: undefined, message: '', consent: false});
-            //console.log('form cleared.');
         }
     }
 
