@@ -71,7 +71,7 @@ export default function ContactForm() {
                         onChange={handleChange}
                         value={formData.firstName}
                     />
-                    {errorFlag.firstName && <p className='error-msg'>{errorMessage.firstName}</p>}
+                    {errorFlag.firstName && <p className='error-msg' aria-live='assertive'>{errorMessage.firstName}</p>}
                 </label>
                 <label htmlFor="last-name" className={"w-full flex flex-col my-2" + `${errorFlag.firstName ? ' error': ''}`}>
                     Last Name *
@@ -83,7 +83,7 @@ export default function ContactForm() {
                         onChange={handleChange}
                         value={formData.lastName}
                     />
-                    {errorFlag.lastName && <p className='error-msg'>{errorMessage.lastName}</p>}
+                    {errorFlag.lastName && <p className='error-msg' aria-live='assertive'>{errorMessage.lastName}</p>}
                 </label>
             </div>
             <div className='email-card w-full' >
@@ -97,7 +97,7 @@ export default function ContactForm() {
                         onChange={handleChange}
                         value={formData.email}
                     />
-                    {errorFlag.email && <p className='error-msg'>{errorMessage.email}</p>}
+                    {errorFlag.email && <p className='error-msg' aria-live='assertive'>{errorMessage.email}</p>}
                 </label>
             </div>
             <fieldset className='query-card flex flex-col' >
@@ -130,7 +130,7 @@ export default function ContactForm() {
                         Support Request
                     </label>
                 </div>
-                {errorFlag.queryType && <p className='error-msg'>{errorMessage.queryType}</p>}
+                {errorFlag.queryType && <p className='error-msg' aria-live='assertive'>{errorMessage.queryType}</p>}
             </fieldset>
             <div className='message w-full' >
                 <label htmlFor="message" className={"flex flex-col" + `${errorFlag.firstName ? ' error': ''}`}>
@@ -142,7 +142,7 @@ export default function ContactForm() {
                         value={formData.message}
                         rows={7}
                     />
-                    {errorFlag.message && <p className='error-msg'>{errorMessage.message}</p>}
+                    {errorFlag.message && <p className='error-msg' aria-live='assertive'>{errorMessage.message}</p>}
                 </label>
             </div>
             <label className={'flex flex-col' + `${errorFlag.firstName ? ' error': ''}`}>
@@ -153,10 +153,11 @@ export default function ContactForm() {
                         name='consentBox' 
                         value='consent'
                         onChange={handleChangeCheckBox}
-                        checked={formData.consent}/>
+                        checked={formData.consent}
+                        />
                     <p>I consent to being contacted by the team *</p>
                 </div>
-                {errorFlag.consent && <p className='error-msg'>{errorMessage.consent}</p>}
+                {errorFlag.consent && <p className='error-msg' aria-live='assertive'>{errorMessage.consent}</p>}
             </label>
             <button
                 className='w-full py-2 text-gray-100 rounded-lg'
